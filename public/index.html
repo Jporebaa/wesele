@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8" />
+<title>Galeria Ślubna - Slajdy Map i Zdjęcia</title>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<style>
+  :root {
+    --primary: #d1a48b;
+    --primary-dark: #c49278;
+    --background: #f9f6f2;
+    --text-dark: #fff;
+    --accent-light: #e7d2c5;
+    --box-shadow: 0 8px 32px rgba(190, 146, 105, 0.1);
+  }
+  body {
+    margin: 0;
+    font-family: "Segoe UI", sans-serif;
+    padding: 20px;
+    color: #fff;
+    background-image: url('photos/background.jpg');
+    background-position: center center;
+    background-repeat: no-repeat;
+    background-attachment: fixed; /* tło pozostaje nieruchome podczas scrollowania */
+    background-size: cover; /* tło responsywnie wypełnia cały ekran */
+  }
+  header {
+    background: rgba(209, 164, 139, 0.45);
+    padding: 36px 20px 28px 20px;
+    text-align: center;
+    color: white;
+    border-radius: 0 0 32px 32px;
+    box-shadow: var(--box-shadow);
+  }
+  header h1 {
+    font-size: 2.2em;
+    font-weight: 350;
+    letter-spacing: 2px;
+    margin-bottom: 8px;
+  }
+  header p {
+    font-size: 1.1em;
+    margin-top: 0;
+    opacity: 0.95;
+  }
+  .slider {
+    max-width: 780px;
+    margin: 0 auto 50px auto;
+    background: rgba(255,255,255,0.4);
+    border-radius: 20px;
+    box-shadow: var(--box-shadow);
+    overflow: hidden;
+  }
+  .slides {
+    display: flex;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+  }
+  .slide {
+    scroll-snap-align: start;
+    flex: 0 0 100%;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: flex-start;
+    padding: 24px 20px;
+    box-sizing: border-box;
+    gap: 25px;
+  }
+  .slide.first-slide {
+    flex-direction: row;
+    flex-wrap: wrap;
+  }
+  .first-slide img {
+    width: 45%;
+    max-width: 300px;
+    border-radius: 18px;
+    box-shadow: 0 3px 16px rgba(115,88,50,0.25);
+    object-fit: cover;
+    cursor: zoom-in;
+  }
+  .map-container {
+    width: 50%;
+    min-width: 260px;
+    border-radius: 18px;
+    overflow: hidden;
+    box-shadow: 0 3px 16px rgba(0,0,0,0.3);
+  }
+  iframe {
+    width: 100%;
+    height: 250px;
+    border-radius: 18px;
+    border: none;
+  }
+  @media(max-width: 700px) {
+    .slide {
+      flex-direction: column;
+      padding: 18px 15px;
+      gap: 15px;
+    }
+    .slide img,
+    iframe {
+      width: 100%;
+      max-width: none;
+      height: auto;
+      box-shadow: 0 4px 20px rgba(115,88,50,0.4);
+      cursor: zoom-in;
+    }
+  }
+  .upload-box {
+    box-sizing: border-box;
+    width: 95%;
+    max-width: 440px;
+    margin: 0 auto 40px auto;
+    padding: 25px 20px;
+    background: rgba(255,255,255, 0.4);
+    border-radius: 20px;
+    box-shadow: var(--box-shadow);
+    text-align: center;
+  }
+  .upload-box:hover {
+    box-shadow: 0 14px 40px rgba(190, 146, 105, 0.3);
+  }
+  .upload-box h3 {
+    font-size: 1.35em;
+    margin-bottom: 30px;
+    color: #6a4d3c;
+  }
+  .upload-row {
+    display: flex;
+    gap: 16px;
+    align-items: center;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  .upload-row .btn {
+    flex-grow: 1;
+    min-width: 140px;
+    padding: 15px 24px;
+    font-size: 1.18em;
+    border-radius: 35px;
+    font-weight: 600;
+    background: var(--primary);
+    color: white;
+    border: none;
+    cursor: pointer;
+    transition: background 0.3s ease, transform 0.2s ease;
+    box-shadow: 0 4px 12px rgba(209,164,139,0.15);
+  }
+  .upload-row .btn:hover {
+    background: var(--primary-dark);
+    transform: scale(1.1);
+  }
+  input[type="file"] {
+    flex-grow: 3;
+    min-width: 100px;
+    padding: 16px;
+    border-radius: 25px;
+    border: 2px solid var(--accent-light);
+    font-size: 1.1em;
+    font-family: inherit;
+    background: #f7f1ed;
+  }
+  h2.gallery-title {
+    text-align: center;
+    margin-top: 0;
+    margin-bottom: 35px;
+    font-size: 2.1em;
+    color: white;
+    font-weight: 600;
+    letter-spacing: 1.1px;
+    text-shadow: 2px 2px 8px rgba(0,0,0,0.75);
+  }
+  .gallery {
+    width: 98%;
+    max-width: 960px;
+    margin: 0 auto 40px auto;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 20px;
+    padding: 0 10px;
+  }
+  .gallery-item {
+    background: rgba(255,255,255,0.4);
+    padding: 10px;
+    border-radius: 25px;
+    box-shadow: var(--box-shadow);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    cursor: pointer;
+  }
+  .gallery-item:hover {
+    box-shadow: 0 18px 55px rgba(209,164,139,0.4);
+  }
+  .gallery-item img {
+    max-width: 150px;
+    width: 100%;
+    border-radius: 18px;
+    box-shadow: 0 5px 20px rgba(115,88,50,0.3);
+    margin-bottom: 10px;
+    user-select: none;
+  }
+  .download-link {
+    display: block;
+    width: 100%;
+    padding: 10px 0;
+    font-size: 1em;
+    font-weight: 600;
+    text-align: center;
+    background: var(--accent-light);
+    border-radius: 22px;
+    color: var(--text-dark);
+    text-decoration: none;
+  }
+  .download-link:hover {
+    background: #d5c1b4;
+  }
+  /* Lightbox */
+  #lightbox-overlay {
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(0,0,0,0.9);
+    display: none;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+  }
+  #lightbox-overlay img {
+    max-width: 90%;
+    max-height: 90%;
+    border-radius: 12px;
+    box-shadow: 0 0 25px rgba(255,255,255,0.7);
+  }
+</style>
+</head>
+<body>
+<header>
+  <h1>Nasza Galeria Ślubna</h1>
+  <p>Prześlij zdjęcia z naszego wyjątkowego dnia ❤️</p>
+</header>
+<div class="slider">
+  <div class="slides">
+    <div class="slide first-slide">
+      <img src="photos/kosc.jpg" alt="Kościół św. Anny" />
+      <div class="map-container" style="flex:1">
+        <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d313.26797183233353!2d20.847577500000004!3d49.6141933!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x473de89fa27e66b7%3A0x970452442b64ba22!2zMzMtMzMzINCj0YDQtdC80L7QttC10LHQuNCwINCa0LjRl9C60YDQsNGP!5e0!3m2!1spl!2spl!4v1699883412345!5m2!1spl!2spl" allowfullscreen="" loading="lazy" title="Mapa Kościół"></iframe>
+      </div>
+    </div>
+    <div class="slide">
+      <img src="photos/zac.jpg" alt="Zdjęcie Gołkowice" />
+      <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d253.54282716172903!2d20.5749231!3d49.5401525!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x473dfcfc62df283b%3A0xabeb9f395ed3a2b0!2sGo%C5%82kowice%20G%C3%B3rne%20225!5e0!3m2!1spl!2spl!4v1699882374567" allowfullscreen="" loading="lazy" title="Mapa Gołkowice"></iframe>
+    </div>
+  </div>
+</div>
+<div class="upload-box">
+  <h3>Dodaj zdjęcie z galerii</h3>
+  <div class="upload-row">
+    <button class="btn" onclick="showFileInput()">Wstaw z telefonu</button>
+  </div>
+  <div class="upload-row" style="margin-top: 18px;">
+    <button class="btn" onclick="openCameraAndUpload()">Zrób i wyślij</button>
+  </div>
+  <div id="dynamic-file-upload"></div>
+</div>
+<h2 class="gallery-title">Galeria zdjęć</h2>
+<div id="gallery" class="gallery"></div>
+<div id="lightbox-overlay" onclick="closeLightbox()">
+  <img id="lightbox-image" src="" alt="Powiększone zdjęcie" />
+</div>
+<script>
+  function showFileInput() {
+    const container = document.getElementById("dynamic-file-upload");
+    container.innerHTML = "";
+    const row = document.createElement("div");
+    row.className = "upload-row";
+    row.style.marginTop = "15px";
+    const input = document.createElement("input");
+    input.type = "file";
+    input.accept = "image/*";
+    input.id = "dynamicFileInput";
+    const sendButton = document.createElement("button");
+    sendButton.className = "btn";
+    sendButton.textContent = "Wyślij";
+    sendButton.onclick = async function () {
+      if (!input.files.length) {
+        alert("Wybierz zdjęcie!");
+        return;
+      }
+      const formData = new FormData();
+      formData.append("photo", input.files[0]);
+      await fetch("/upload", { method: "POST", body: formData });
+      alert("Zdjęcie przesłane!");
+      container.innerHTML = "";
+      loadGallery();
+    };
+    row.appendChild(input);
+    row.appendChild(sendButton);
+    container.appendChild(row);
+  }
+  function openCameraAndUpload() {
+    const input = document.createElement("input");
+    input.type = "file";
+    input.accept = "image/*";
+    input.capture = "environment";
+    input.style.display = "none";
+    document.body.appendChild(input);
+    input.onchange = async function () {
+      if (!input.files.length) {
+        alert("Zrób zdjęcie zanim wyślesz!");
+        document.body.removeChild(input);
+        return;
+      }
+      const formData = new FormData();
+      formData.append("photo", input.files[0]);
+      await fetch("/upload", { method: "POST", body: formData });
+      alert("Zdjęcie zrobione i przesłane!");
+      document.body.removeChild(input);
+      loadGallery();
+    };
+    input.click();
+  }
+  function openLightbox(src) {
+    const overlay = document.getElementById("lightbox-overlay");
+    const lightboxImg = document.getElementById("lightbox-image");
+    lightboxImg.src = src;
+    overlay.style.display = "flex";
+  }
+  function closeLightbox() {
+    const overlay = document.getElementById("lightbox-overlay");
+    overlay.style.display = "none";
+    const lightboxImg = document.getElementById("lightbox-image");
+    lightboxImg.src = "";
+  }
+  async function loadGallery() {
+    const response = await fetch("/photos");
+    const photos = await response.json();
+    const gallery = document.getElementById("gallery");
+    gallery.innerHTML = "";
+    photos.forEach((file) => {
+      const box = document.createElement("div");
+      box.className = "gallery-item";
+      const img = document.createElement("img");
+      img.src = "/uploads/" + file;
+      img.alt = file;
+      img.onclick = () => openLightbox(img.src);
+      const link = document.createElement("a");
+      link.href = "/uploads/" + file;
+      link.download = file;
+      link.className = "download-link";
+      link.textContent = "Pobierz";
+      box.appendChild(img);
+      box.appendChild(link);
+      gallery.appendChild(box);
+    });
+  }
+  loadGallery();
+</script>
+</body>
+</html>
